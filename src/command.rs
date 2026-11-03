@@ -7,6 +7,7 @@ mod commit;
 mod pr;
 
 pub use branch::Branch;
+pub use commit::Commit;
 pub use pr::PullRequest;
 
 fn wait(command: &mut Command) -> Result<()> {

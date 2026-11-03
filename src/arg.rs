@@ -45,6 +45,18 @@ pub enum PRCommand {
 
 #[derive(Subcommand)]
 pub enum CommitCommand {
-    /// Create a new commit on the main branch via a pr process.
-    Create,
+    /// Create a new commit on the main branch via a pr based process.
+    ///
+    /// The process has the following steps:
+    ///
+    /// 1. Create a new branch whose name is prefixed with <branch_name> and postfixed with a unique timestamp.
+    /// 2. Switch to that branch and initiate git commit to commit the staged area.
+    /// 3. After commit, create a new pull request with that commit.
+    /// 4. Check pull request CI status and squash that pull request if CI is ok.
+    /// 5. Switch to the main branch, pull the newly merged commit.
+    /// 6. Delete the previouly created branch.
+    Create {
+        // Name of the branch to create for the pr process.
+        branch_name: String,
+    },
 }
