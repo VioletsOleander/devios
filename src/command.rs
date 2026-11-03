@@ -7,8 +7,23 @@ mod commit;
 mod pr;
 
 pub use branch::Branch;
+pub use pr::PullRequest;
 
-fn get_output(command: &mut Command) -> Result<String> {
+fn wait(command: &mut Command) -> Result<()> {
+    let status = command.status()?;
+
+    if !status.success() {
+        Ok(())
+    } else {
+        Err(anyhow!(
+            "command: {:?} failed with exit code {:?}",
+            command,
+            status.code(),
+        ))
+    }
+}
+
+fn wait_output(command: &mut Command) -> Result<String> {
     let output = command.output()?;
 
     if output.status.success() {
@@ -16,24 +31,10 @@ fn get_output(command: &mut Command) -> Result<String> {
         Ok(stdout)
     } else {
         Err(anyhow!(
-            "failed to run command: {:?}, with exit code {:?} and stderr {}",
+            "command: {:?} failed with exit code {:?} and stderr {}",
             command,
             output.status.code(),
             String::from_utf8_lossy(&output.stderr),
-        ))
-    }
-}
-
-fn get_code(command: &mut Command) -> Result<Option<i32>> {
-    let status = command.status()?;
-
-    if status.success() {
-        Ok(status.code())
-    } else {
-        Err(anyhow!(
-            "failed to run command: {:?}, with exit code {:?}",
-            command,
-            status.code(),
         ))
     }
 }
