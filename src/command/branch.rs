@@ -1,8 +1,9 @@
 use std::process::Command;
 
-use anyhow::{Result, anyhow};
+use anyhow::Result;
 use chrono::Local;
 
+use super::get_code;
 use crate::arg::BranchCommand;
 
 pub struct Branch;
@@ -14,19 +15,8 @@ impl Branch {
                 let time = Local::now().format("%Y%m%d-%H%M%S");
                 let branch_name = format!("{}/{}", name, time);
 
-                let status = Command::new("git")
-                    .args(["switch", "--create", &branch_name])
-                    .status()?;
-
-                if status.success() {
-                    Ok(branch_name)
-                } else {
-                    Err(anyhow!(
-                        "failed to run command git switch --create {}, received exit code {:?}",
-                        branch_name,
-                        status.code()
-                    ))
-                }
+                let _ = get_code(Command::new("git").args(["switch", "--create", &branch_name]));
+                Ok(branch_name)
             }
         }
     }
