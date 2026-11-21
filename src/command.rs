@@ -13,7 +13,7 @@ pub use pr::PullRequest;
 fn wait(command: &mut Command) -> Result<()> {
     let status = command.status()?;
 
-    if !status.success() {
+    if status.success() {
         Ok(())
     } else {
         Err(anyhow!(
